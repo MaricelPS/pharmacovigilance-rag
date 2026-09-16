@@ -13,11 +13,11 @@ CREATE TABLE IF NOT EXISTS reports (
     event_dt DATE,
     fda_dt DATE,
     age NUMERIC,
-    age_unit VARCHAR(10),
-    sex VARCHAR(3),
-    reporter_country VARCHAR(10),
-    occur_country VARCHAR(10),
-    reporter_type VARCHAR(10),
+    age_unit VARCHAR(20),
+    sex VARCHAR(10),
+    reporter_country VARCHAR(50),
+    occur_country VARCHAR(50),
+    reporter_type VARCHAR(20),
     serious BOOLEAN DEFAULT FALSE,
     faers_quarter VARCHAR(6) NOT NULL
 );
@@ -31,12 +31,12 @@ CREATE TABLE IF NOT EXISTS drugs (
     id BIGSERIAL PRIMARY KEY,
     primaryid BIGINT NOT NULL REFERENCES reports(primaryid) ON DELETE CASCADE,
     drug_seq INT,
-    role_cod VARCHAR(2),          -- PS: primary suspect, SS: secondary, C: concomitant, I: interacting
+    role_cod VARCHAR(10),          -- PS: primary suspect, SS: secondary, C: concomitant, I: interacting
     drugname TEXT,
     prod_ai TEXT,                 -- Active ingredient
     route TEXT,
     dose_amt NUMERIC,
-    dose_unit VARCHAR(20),
+    dose_unit VARCHAR(50),
     is_glp1 BOOLEAN DEFAULT FALSE -- Flag for GLP-1 cohort membership
 );
 
@@ -60,7 +60,7 @@ CREATE INDEX IF NOT EXISTS idx_reactions_pt_trgm ON reactions USING gin (pt gin_
 CREATE TABLE IF NOT EXISTS outcomes (
     id BIGSERIAL PRIMARY KEY,
     primaryid BIGINT NOT NULL REFERENCES reports(primaryid) ON DELETE CASCADE,
-    outc_cod VARCHAR(5)           -- DE, LT, HO, DS, CA, RI, OT
+    outc_cod VARCHAR(10)           -- DE, LT, HO, DS, CA, RI, OT
 );
 
 CREATE INDEX IF NOT EXISTS idx_outcomes_primaryid ON outcomes(primaryid);
