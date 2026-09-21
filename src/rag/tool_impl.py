@@ -5,8 +5,12 @@ import polars as pl
 from sqlalchemy import create_engine, text
 
 from src.config import DATABASE_URL
-from src.analytics.signals import scan_signals_for_drug, compute_signal
 from src.rag.semantic_search import search_pts
+from src.analytics.signals import (
+    scan_signals_for_drug,
+    scan_signals_from_precomputed,
+    compute_signal,
+)
 
 
 engine = create_engine(DATABASE_URL)
@@ -22,7 +26,7 @@ def tool_detect_signals(
         drug_key: str, min_cases: int = 10, top_n: int = 20
 ) -> list[dict]:
     """Scan and return top signals for a drug ranked by IC."""
-    df = scan_signals_for_drug(drug_key, min_cases=min_cases)
+    df = scan_signals_from_precomputed(drug_key, min_cases=min_cases)
     top = (
         df.filter(pl.col("is_signal_ema") | pl.col("is_signal_bcpnn"))
         .head(top_n)

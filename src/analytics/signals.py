@@ -142,3 +142,31 @@ if __name__ == "__main__":
         "ror", "ror_ci_low", "ror_ci_high",
         "ic", "ic_ci_low", "is_signal_ema", "is_signal_bcpnn",
     ]))
+
+def scan_signals_from_precomputed(
+        drug_key: str,
+        min_cases: int = 10,
+) -> pl.DataFrame:
+    """Fetch precomputed signals for a drug from glp1_signals table.
+
+    Used in production where drug_event_counts is not available.
+    Falls back to on-the-fly computation if the table is empty.
+    """
+    sql = text("""
+        SELECT event_pt, a, b, c, d,
+               prr, prr_chi2, ror, ror_ci_low, ror_ci_high,
+               ic, ic_ci_low, is_signal_ema, is_signal_bcpnn
+        FROM glp1_signals
+        WHERE drug_key = :drug_key AND a >= :min_cases
+        ORDER BY ic DESC
+    """)
+    with engine.connect() as conn:
+        rows = conn.execute(
+            sql, {"drug_key": drug_key, "min_cases": min_cases}
+        ).mappings().all()
+
+    if not rows:
+        # Fallback to live computation (dev mode with drug_event_counts)
+        return scan_signals_for_drug(drug_key, min_cases=min_cases)
+
+    return pl.DataFrame([dict(r) for r in rows]).sort("ic", descending=True)

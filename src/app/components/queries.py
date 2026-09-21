@@ -8,7 +8,7 @@ import streamlit as st
 from sqlalchemy import create_engine, text
 
 from src.config import DATABASE_URL
-from src.analytics.signals import scan_signals_for_drug
+from src.analytics.signals import scan_signals_from_precomputed
 
 
 @st.cache_resource
@@ -99,7 +99,7 @@ def demographics() -> pl.DataFrame:
 @st.cache_data(ttl=3600)
 def signals_for_drug(drug_key: str, min_cases: int = 10) -> pl.DataFrame:
     """Compute and cache the full signal scan for a drug."""
-    return scan_signals_for_drug(drug_key, min_cases=min_cases)
+    return scan_signals_from_precomputed(drug_key, min_cases=min_cases)
 
 
 @st.cache_data(ttl=3600)

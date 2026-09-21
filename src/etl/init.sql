@@ -130,6 +130,34 @@ INSERT INTO glp1_drugs (active_ingredient, brand_names, indication_class) VALUES
 ON CONFLICT (active_ingredient) DO NOTHING;
 
 -- ============================================================
+-- Precomputed signal metrics for GLP-1 drugs
+-- Replaces the need to store full drug_event_counts in production.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS glp1_signals (
+    drug_key TEXT NOT NULL,
+    event_pt TEXT NOT NULL,
+    a BIGINT NOT NULL,           -- Reports with drug AND event
+    b BIGINT NOT NULL,           -- Reports with drug, no event
+    c BIGINT NOT NULL,           -- Reports without drug, with event
+    d BIGINT NOT NULL,           -- Reports without drug or event
+    prr NUMERIC,
+    prr_chi2 NUMERIC,
+    ror NUMERIC,
+    ror_ci_low NUMERIC,
+    ror_ci_high NUMERIC,
+    ic NUMERIC,
+    ic_ci_low NUMERIC,
+    is_signal_ema BOOLEAN,
+    is_signal_bcpnn BOOLEAN,
+    PRIMARY KEY (drug_key, event_pt)
+);
+
+CREATE INDEX IF NOT EXISTS idx_glp1_signals_drug ON glp1_signals(drug_key);
+CREATE INDEX IF NOT EXISTS idx_glp1_signals_ema ON glp1_signals(is_signal_ema) WHERE is_signal_ema = TRUE;
+CREATE INDEX IF NOT EXISTS idx_glp1_signals_ic ON glp1_signals(ic DESC);
+
+-- ============================================================
 -- Embeddings for semantic search over MedDRA PTs
 -- ============================================================
 
