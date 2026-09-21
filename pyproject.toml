@@ -30,6 +30,7 @@ dependencies = [
     "python-dotenv>=1.0",
     "requests>=2.31",
     "tqdm>=4.66",
+    "plotly>=5.20",
 ]
 
 [project.optional-dependencies]
