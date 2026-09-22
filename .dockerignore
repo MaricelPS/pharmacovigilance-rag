@@ -1,0 +1,32 @@
+# Environment files (secrets go in Space Secrets)
+.env
+.env.supabase
+.env.example
+
+# Data files (production uses Supabase)
+data/
+*.parquet
+*.csv
+*.zip
+
+# Development
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+notebooks/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Local Postgres
+docker-compose.yml
+
+# Tests
+tests/
