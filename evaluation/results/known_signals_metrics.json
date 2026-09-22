@@ -1,0 +1,11 @@
+{
+  "total_known_signals": 11,
+  "found_in_data": 11,
+  "found_rate": 1.0,
+  "detected_by_ema": 11,
+  "detected_by_bcpnn": 11,
+  "detected_by_either": 11,
+  "detection_rate_either": 1.0,
+  "detection_rate_ema": 1.0,
+  "detection_rate_bcpnn": 1.0
+}

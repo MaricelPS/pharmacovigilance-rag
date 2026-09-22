@@ -1,0 +1,147 @@
+# Known GLP-1 safety signals published in peer-reviewed literature or
+# reported by regulatory agencies (FDA, EMA) during 2023-2024.
+# Each entry defines a drug-event pair we expect the system to detect as
+# a statistical signal (EMA criteria or BCPNN).
+#
+# Fields:
+#   - id: unique identifier
+#   - drug: normalized active ingredient (matches drug_key in glp1_signals)
+#   - event_pts: MedDRA PTs that capture the signal in FAERS
+#   - literature_source: reference to the original publication or agency
+#   - year: publication or communication year
+#   - notes: clinical context
+
+items:
+
+  - id: k01
+    drug: semaglutide
+    event_pts:
+      - "Optic ischaemic neuropathy"
+    literature_source: |
+      Hathaway JT et al. Risk of Nonarteritic Anterior Ischemic Optic
+      Neuropathy in Patients Prescribed Semaglutide. JAMA Ophthalmol. 2024.
+    year: 2024
+    notes: |
+      NAION cases reported in patients on semaglutide. First large-scale
+      cohort analysis prompting FDA post-marketing surveillance.
+
+  - id: k02
+    drug: semaglutide
+    event_pts:
+      - "Impaired gastric emptying"
+      - "Gastroparesis"
+    literature_source: |
+      Sodhi M et al. Risk of Gastrointestinal Adverse Events Associated
+      With Glucagon-Like Peptide-1 Receptor Agonists for Weight Loss.
+      JAMA. 2023;330(18):1795-1797.
+    year: 2023
+    notes: |
+      Gastroparesis signal in weight-loss cohort. Well-established
+      pharmacological effect via delayed gastric emptying.
+
+  - id: k03
+    drug: liraglutide
+    event_pts:
+      - "Impaired gastric emptying"
+      - "Gastroparesis"
+    literature_source: |
+      Sodhi M et al. JAMA. 2023;330(18):1795-1797.
+    year: 2023
+    notes: |
+      Same signal class in liraglutide, first-in-class subcutaneous GLP-1.
+
+  - id: k04
+    drug: tirzepatide
+    event_pts:
+      - "Impaired gastric emptying"
+    literature_source: |
+      FDA prescribing information for Mounjaro/Zepbound. Common adverse
+      reactions include delayed gastric emptying.
+    year: 2023
+    notes: |
+      Class effect extended to the dual GIP/GLP-1 agonist.
+
+  - id: k05
+    drug: semaglutide
+    event_pts:
+      - "Pancreatitis"
+      - "Pancreatitis acute"
+    literature_source: |
+      FDA prescribing information for Ozempic/Wegovy. Warnings and
+      precautions section includes pancreatitis.
+    year: 2023
+    notes: |
+      Long-standing GLP-1 class warning going back to exenatide.
+
+  - id: k06
+    drug: liraglutide
+    event_pts:
+      - "Pancreatitis"
+      - "Pancreatitis acute"
+    literature_source: |
+      FDA prescribing information for Victoza/Saxenda.
+    year: 2023
+    notes: |
+      Class warning applied to liraglutide.
+
+  - id: k07
+    drug: semaglutide
+    event_pts:
+      - "Cholelithiasis"
+      - "Cholecystitis"
+    literature_source: |
+      He L et al. Association of Glucagon-Like Peptide-1 Receptor Agonist
+      Use With Risk of Gallbladder and Biliary Diseases. JAMA Intern Med.
+      2022;182(5):513-519.
+    year: 2022
+    notes: |
+      Gallbladder disease signal replicated in FAERS-based analyses.
+
+  - id: k08
+    drug: liraglutide
+    event_pts:
+      - "Cholelithiasis"
+      - "Cholecystitis"
+    literature_source: |
+      He L et al. JAMA Intern Med. 2022;182(5):513-519.
+    year: 2022
+    notes: |
+      Same gallbladder/biliary signal in liraglutide.
+
+  - id: k09
+    drug: semaglutide
+    event_pts:
+      - "Suicidal ideation"
+    literature_source: |
+      EMA. Signal review of semaglutide and suicidal ideation, 2023.
+      FDA statement on suicidality, January 2024 (no clear causal link
+      confirmed but signal under active monitoring).
+    year: 2023
+    notes: |
+      Controversial signal detected in EudraVigilance. FDA's post-marketing
+      review did not confirm causality but signal remains under surveillance.
+
+  - id: k10
+    drug: tirzepatide
+    event_pts:
+      - "Injection site pain"
+      - "Injection site erythema"
+    literature_source: |
+      Frias JP et al. Tirzepatide versus Semaglutide Once Weekly in Patients
+      with Type 2 Diabetes. N Engl J Med. 2021;385:503-515. (SURPASS-2 trial)
+    year: 2021
+    notes: |
+      Injection-site reactions well documented in SURPASS registration
+      trials. Not a "signal" in the disproportionality sense; used here as
+      a positive control (should appear massively).
+
+  - id: k11
+    drug: semaglutide
+    event_pts:
+      - "Ileus"
+    literature_source: |
+      FDA label update for Ozempic, September 2023: warning added for
+      ileus based on post-marketing FAERS reports.
+    year: 2023
+    notes: |
+      Label update triggered by post-marketing signal.
