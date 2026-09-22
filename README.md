@@ -39,6 +39,12 @@ FDA Adverse Event Reporting System (FAERS), quarterly data 2024 Q1–Q4.
 Cohort restricted to reports mentioning any GLP-1 receptor agonist:
 72,835 unique reports, 5,058 unique MedDRA Preferred Terms.
 
+## Live demo
+
+Try the deployed app: **[https://pharmacovigilance-rag-tb2m67berfdccrlmtxpmep.streamlit.app/](https://pharmacovigilance-rag-tb2m67berfdccrlmtxpmep.streamlit.app/)**
+
+Note: the app may take 30 seconds to wake up if it has been idle.
+
 ## Disclaimer
 
 Spontaneous adverse event reports show **association, not causation**.
