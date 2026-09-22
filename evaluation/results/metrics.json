@@ -1,0 +1,10 @@
+{
+  "total_questions": 15,
+  "tool_accuracy": 1.0,
+  "avg_pt_coverage": 0.9333333333333333,
+  "no_forbidden_rate": 1.0,
+  "n_citation_rate": 1.0,
+  "limitation_rate": 1.0,
+  "avg_turns": 3.2,
+  "errors": []
+}

@@ -1,0 +1,218 @@
+# Evaluation dataset for the pharmacovigilance agent.
+# Each item has:
+#   - id: unique identifier
+#   - category: type of query (open_signal, specific_signal, comparison, subgroup, semantic_lookup, edge_case)
+#   - question: input to the agent (in Spanish or English)
+#   - expected_tool: which tool the agent SHOULD call first (semantic_event_search / detect_signals / query_cohort_events / compare_drugs)
+#   - must_mention_pts: MedDRA Preferred Terms that should appear in the answer
+#   - expected_signals: known signals from literature that the answer should surface
+#   - forbidden_claims: claims the answer must NOT make (causation, etc.)
+#   - notes: rationale or references
+
+items:
+
+  - id: q01
+    category: open_signal
+    question: "¿Qué señales de seguridad emergentes aparecen para semaglutida en 2024?"
+    expected_tool: detect_signals
+    must_mention_pts:
+      - "Impaired gastric emptying"
+      - "Optic ischaemic neuropathy"
+    expected_signals:
+      - "Gastroparesis (documented signal, Sodhi et al. JAMA 2023)"
+      - "NAION (Hathaway et al. JAMA Ophthalmol 2024)"
+    forbidden_claims:
+      - "causes"
+      - "causa"
+      - "provoca"
+    notes: |
+      Open-ended safety query. Agent should call detect_signals directly
+      and return top signals ranked by IC.
+
+  - id: q02
+    category: semantic_lookup
+    question: "¿Hay reportes de problemas hepáticos con tirzepatida?"
+    expected_tool: semantic_event_search
+    must_mention_pts:
+      - "Hepatic function abnormal"
+    expected_signals: []
+    forbidden_claims:
+      - "causa daño hepático"
+    notes: |
+      Lay-term query requires semantic translation of "problemas hepáticos"
+      into MedDRA PTs before querying the cohort.
+
+  - id: q03
+    category: comparison
+    question: "Comparame el perfil de pancreatitis entre semaglutida, liraglutida y tirzepatida."
+    expected_tool: compare_drugs
+    must_mention_pts:
+      - "Pancreatitis"
+      - "Pancreatitis acute"
+    expected_signals:
+      - "Pancreatitis signal historically documented for GLP-1 class"
+    forbidden_claims:
+      - "más seguro"
+      - "menos seguro"
+    notes: |
+      Head-to-head comparison. Agent should call compare_drugs with the
+      three active ingredients and pancreatitis-related PTs.
+
+  - id: q04
+    category: specific_signal
+    question: "¿Existe alguna señal de alerta que vincule a la semaglutida con la neuropatía óptica isquémica anterior no arterítica (NAION) según estudios recientes de 2024?"
+    expected_tool: check_signal
+    must_mention_pts:
+      - "Ischaemic optic neuropathy"
+      - "Optic nerve infarction"
+    expected_signals:
+      - "NAION signal documented in literature (Hathaway et al., JAMA Ophthalmol 2024)"
+    forbidden_claims: []
+    notes: |
+      Validates a known specific signal recently published in literature. The agent should look for optic nerve ischemic events for semaglutide.
+
+  - id: q05
+    category: specific_signal
+    question: "Quiero saber si la gastroparesia o el retraso en el vaciamiento gástrico están estadísticamente asociados como señal para los agonistas de GLP-1."
+    expected_tool: check_signal
+    must_mention_pts:
+      - "Gastroparesis"
+      - "Gastric emptying impaired"
+    expected_signals:
+      - "Gastroparesis signal documented (Sodhi et al., JAMA 2023)"
+    forbidden_claims: []
+    notes: |
+      Classic GI specific signal validation. Can be queried for the whole class or general GLP-1 terms.
+
+  - id: q06
+    category: specific_signal
+    question: "¿Hay reportes o señales de ideación suicida o comportamiento autolesivo asociados al uso de semaglutida?"
+    expected_tool: check_signal
+    must_mention_pts:
+      - "Suicidal ideation"
+      - "Suicide attempt"
+    expected_signals:
+      - "Regulatory review context (EMA evaluated in 2023, FDA did not confirm a clear causal link)"
+    forbidden_claims:
+      - "causa confirmada"
+      - "totalmente descartado"
+    notes: |
+      Controversial signal with intensive regulatory monitoring. The response should reflect neutrality and lack of definitive consensus while acknowledging reports.
+
+  - id: q07
+    category: specific_signal
+    question: "Tengo una duda sobre seguridad en quirófano: ¿el uso de GLP-1 se asocia con un mayor riesgo de aspiración pulmonar bajo anestesia?"
+    expected_tool: check_signal
+    must_mention_pts:
+      - "Aspiration pneumonia"
+      - "Gastric aspiration"
+    expected_signals:
+      - "Risk of residual gastric contents and aspiration leading to ASA guidelines 2023"
+    forbidden_claims: []
+    notes: |
+      Specific safety signal relevant to perioperative management and surgical guidelines.
+
+  - id: q08
+    category: open_signal
+    question: "¿Cuáles son las principales señales de seguridad y eventos adversos reportados para la tirzepatida en la base de datos?"
+    expected_tool: get_open_signals
+    must_mention_pts:
+      - "Injection site"
+      - "Incorrect dose administered"
+      - "Impaired gastric emptying"
+    expected_signals:
+      - "GI signals + injection site + medication error profile characteristic of subcutaneous GLP-1 in mass-market use"
+    forbidden_claims: []
+    notes: |
+      Open signal query for tirzepatide. Expected profile mixes GI events,
+      injection-site reactions and medication errors.
+
+  - id: q09
+    category: open_signal
+    question: "¿Qué señales de alerta de tipo musculoesquelético severo, como la rabdomiólisis, se han detectado de forma abierta para la clase de los GLP-1?"
+    expected_tool: get_open_signals
+    must_mention_pts:
+      - "Rhabdomyolysis"
+      - "Blood creatine phosphokinase increased"
+    expected_signals:
+      - "Rare case reports or low-frequency signals of rhabdomyolysis documented in literature"
+    forbidden_claims: []
+    notes: |
+      Open signal exploration targeting rare but severe musculoskeletal events across the class.
+
+  - id: q10
+    category: comparison
+    question: "Comparame el perfil de eventos adversos gastrointestinales específicamente entre semaglutida y tirzepatida."
+    expected_tool: compare_drugs
+    must_mention_pts:
+      - "Nausea"
+      - "Vomiting"
+      - "Dyspepsia"
+    expected_signals:
+      - "Both agents exhibit strong GI signals; statistical differences in reporting rates may vary by dose"
+    forbidden_claims:
+      - "absolutamente libre de riesgo"
+      - "sin efectos secundarios"
+    notes: |
+      Head-to-head comparison of the two leading agents regarding their most common therapeutic limitation (GI tolerability).
+
+  - id: q11
+    category: subgroup
+    question: "¿Cuáles son las señales de eventos adversos más serios o que resultaron en muerte en el subgrupo de pacientes mayores de 65 años que toman liraglutida?"
+    expected_tool: check_subgroup
+    must_mention_pts:
+      - "Death"
+      - "Geriatric subpopulation"
+    expected_signals:
+      - "Analysis filtered by age (>65) and outcome criteria (fatal/serious)"
+    forbidden_claims: []
+    notes: |
+      Subgroup analysis crossing an age demographic with a specific severity outcome (death/serious events).
+
+  - id: q12
+    category: subgroup
+    question: "¿Se han registrado señales o reportes significativos de pancreatitis aguda específicamente en mujeres embarazadas expuestas a semaglutida?"
+    expected_tool: check_subgroup
+    must_mention_pts:
+      - "Pancreatitis acute"
+      - "Pregnancy"
+    expected_signals:
+      - "Extremely limited data or specific signals in pregnant populations due to ethical exclusions"
+    forbidden_claims: []
+    notes: |
+      Subgroup analysis targeting a sensitive and complex population (pregnancy) paired with a high-interest event.
+
+  - id: q13
+    category: semantic_lookup
+    question: "¿Qué reportes hay sobre pacientes que sufren de 'parálisis estomacal' o que 'se les traba la digestión' cuando usan GLP-1?"
+    expected_tool: semantic_search
+    must_mention_pts:
+      - "Gastroparesis"
+      - "Gastric hypomotility"
+    expected_signals:
+      - "Mapping of patient lay-terms like 'parálisis estomacal' to the clinical PT Gastroparesis"
+    forbidden_claims: []
+    notes: |
+      Tests the system's ability to translate colloquial or layperson descriptions into standardized MedDRA terms.
+
+  - id: q14
+    category: edge_case
+    question: "¿Qué señales de farmacovigilancia aparecen registradas para el medicamento pepitolestin?"
+    expected_tool: handle_invalid_drug
+    must_mention_pts: []
+    expected_signals:
+      - "Drug does not exist or is not found in the GLP-1/tirzepatide pharmacovigilance database"
+    forbidden_claims: []
+    notes: |
+      Edge case / Trick question. Testing robustness against a completely fictional drug name. The agent must reject or flag the missing entity.
+
+  - id: q15
+    category: edge_case
+    question: "¿La semaglutida causa levitación espontánea o flotación corporal?"
+    expected_tool: handle_absurd_event
+    must_mention_pts: []
+    expected_signals:
+      - "No biological plausibility or records of such an event; unrelated to MedDRA terminology"
+    forbidden_claims: []
+    notes: |
+      Edge case / Absurd question. Checks if the system handles nonsensical clinical queries gracefully without hallucinating statistical correlations.
