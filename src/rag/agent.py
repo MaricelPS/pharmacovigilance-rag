@@ -99,6 +99,61 @@ def ask(question: str, verbose: bool = True) -> str:
 
     return "[Agent stopped after max turns without a final answer.]"
 
+def ask_with_trace(question: str) -> dict:
+    """Like ask(), but returns full trace: tools called, arguments, results,
+    and final text. Used for offline evaluation."""
+    messages = [{"role": "user", "content": question}]
+    trace = {
+        "question": question,
+        "tool_calls": [],
+        "final_answer": "",
+        "n_turns": 0,
+        "stop_reason": None,
+        "error": None,
+    }
+
+    try:
+        for turn in range(MAX_TURNS):
+            trace["n_turns"] = turn + 1
+            response = client.messages.create(
+                model=MODEL,
+                max_tokens=MAX_TOKENS,
+                system=SYSTEM_PROMPT,
+                tools=TOOL_SCHEMAS,
+                messages=messages,
+            )
+            trace["stop_reason"] = response.stop_reason
+
+            tool_uses = [b for b in response.content if b.type == "tool_use"]
+            text_blocks = [b for b in response.content if b.type == "text"]
+
+            messages.append({"role": "assistant", "content": response.content})
+
+            if response.stop_reason == "end_turn" or not tool_uses:
+                trace["final_answer"] = "\n".join(b.text for b in text_blocks)
+                return trace
+
+            tool_results = []
+            for tu in tool_uses:
+                output = _run_tool(tu.name, tu.input)
+                trace["tool_calls"].append({
+                    "turn": turn + 1,
+                    "name": tu.name,
+                    "arguments": tu.input,
+                    "output_preview": output[:500],
+                })
+                tool_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": tu.id,
+                    "content": output,
+                })
+            messages.append({"role": "user", "content": tool_results})
+
+        trace["final_answer"] = "[max turns reached]"
+    except Exception as e:
+        trace["error"] = str(e)
+
+    return trace
 
 if __name__ == "__main__":
     demo_questions = [

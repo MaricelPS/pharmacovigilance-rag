@@ -68,4 +68,6 @@ volumes/
 # Coverage
 .coverage
 htmlcov/
-coverage.xml.env.docker 
+coverage.xml.env.docker
+
+evaluation/results/
